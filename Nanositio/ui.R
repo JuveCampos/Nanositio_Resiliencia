@@ -1,6 +1,4 @@
 
-library(shiny)
-
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   
@@ -10,26 +8,48 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      
-# selectInput("SP","Select Provider", 
-#             choices = unlist(leaflet::providers) %>% 
-#               as.character(), selected = "CartoDB.Positron"),
-      
+
       radioButtons("rbOp1", "Seleccione Información:",
                    c("División Política" = "divPol",
                      "Hidrometeorológica" = "hm",
                      "Hidrología" = "hid",
-                     "Sísmica" = "sis",
-                     "Otros Riesgos" = "or",
+                    # "Sísmica" = "sis",
+                    # "Otros Riesgos" = "or",
                      "Infraestructura" = "inf")),
-                   htmlOutput("opciones_Hidrologia"),
-                   htmlOutput("opciones_HidroMeteo"),
+      # divPol, hm, hid, sis, or, inf
+      
+      htmlOutput("opciones_Hidrologia"),
+      conditionalPanel(
+        condition = "input.rbOp1 == 'hid'",
+        radioButtons("rbHid", "Seleccione Capa:", info_hidrologica)
+      ),
+      conditionalPanel(
+        condition = "input.rbOp1 == 'sis'",
+        radioButtons("rbSis", "Seleccione Capa:", info_sismica)
+      ),
+      conditionalPanel(
+        condition = "input.rbOp1 == 'hm'",
+        radioButtons("rbHm", "Seleccione Capa:", info_hidrometeorologica)
+      ),
+      
+                   htmlOutput("selMes"),
                    htmlOutput("opciones_Infraestructura")
-    ),
+      #, 
+    #               textOutput("text"),
+    #               textOutput("text2")
+    ), # NOTA: ya despues descubri que Conditional panel y el HTMLOutput es lo mismo... 
     
-    # Show a plot of the generated distribution
+    # Panel principal 
     mainPanel(
-      shinycssloaders::withSpinner(leafletOutput("Mapa", height = 500))
+      shinycssloaders::withSpinner(leafletOutput("mapa", height = 500))
     )
   )
+  # , 
+  # br(), 
+  # shiny::wellPanel(
+  #   #textOutput("outputText")
+  #   h2("Capa Seleccionada: "),
+  #   h3(textOutput("outputText"))
+  #   
+  #)
 ))
